@@ -1,0 +1,29 @@
+﻿@page "/schools"
+
+@using SchoolDirectoryApp.Models
+@using SchoolDirectoryApp.Services
+
+@inject SchoolService SchoolService
+
+<h1>School Directory</h1>
+
+@if (schools == null)
+{
+    <p>Loading schools...</p>
+}
+else
+{
+    @foreach (var school in schools)
+    {
+        <p>@school.SchoolName</p>
+    }
+}
+
+@code {
+    private List<School>? schools;
+
+    protected override async Task OnInitializedAsync()
+    {
+        schools = await SchoolService.GetSchoolsAsync();
+    }
+}

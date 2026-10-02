@@ -7,7 +7,11 @@
 
 <h1>School Directory</h1>
 
-@if (schools == null)
+@if (error)
+{
+    <p>Unable to retrieve school data.</p>
+}
+else if (schools == null)
 {
     <p>Loading schools...</p>
 }
@@ -21,9 +25,17 @@ else
 
 @code {
     private List<School>? schools;
+    private bool error = false;
 
     protected override async Task OnInitializedAsync()
     {
-        schools = await SchoolService.GetSchoolsAsync();
+        try
+        {
+            schools = await SchoolService.GetSchoolsAsync();
+        }
+        catch (Exception)
+        {
+            error = true;
+        }
     }
 }

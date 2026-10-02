@@ -1,5 +1,5 @@
 ﻿@page "/schools"
-
+@using SchoolDirectoryApp.Components
 @using SchoolDirectoryApp.Models
 @using SchoolDirectoryApp.Services
 
@@ -19,7 +19,7 @@ else
 {
     @foreach (var school in schools)
     {
-        <p>@school.SchoolName</p>
+        <SchoolCard School="@school" />
     }
 }
 

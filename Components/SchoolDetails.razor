@@ -1,0 +1,19 @@
+﻿@using SchoolDirectoryApp.Models
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h3>@School.SchoolName</h3>
+
+        <p><strong>School ID:</strong> @School.SchoolId</p>
+        <p><strong>Address:</strong> @School.Address</p>
+        <p><strong>Phone:</strong> @School.PhoneNo</p>
+        <p><strong>Email:</strong> @School.EmailAddress</p>
+        <p><strong>Proprietor:</strong> @School.ProprietorFullName</p>
+        <p><strong>Head:</strong> @School.HeadFullName</p>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public School School { get; set; } = default!;
+}

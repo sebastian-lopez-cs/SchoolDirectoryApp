@@ -1,4 +1,5 @@
 ﻿@page "/schools"
+@rendermode InteractiveServer
 @using SchoolDirectoryApp.Components
 @using SchoolDirectoryApp.Models
 @using SchoolDirectoryApp.Services
@@ -17,15 +18,25 @@ else if (schools == null)
 }
 else
 {
+    @if (selectedSchool != null)
+    {
+        <SchoolDetails School="@selectedSchool" />
+    }
     @foreach (var school in schools)
     {
-        <SchoolCard School="@school" />
+        <SchoolCard School="@school"
+                    OnSelect="HandleSchoolSelected" />
     }
 }
 
 @code {
     private List<School>? schools;
     private bool error = false;
+    private School? selectedSchool;
+    private void HandleSchoolSelected(School school)
+    {
+        selectedSchool = school;
+    }
 
     protected override async Task OnInitializedAsync()
     {

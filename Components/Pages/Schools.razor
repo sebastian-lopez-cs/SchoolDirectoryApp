@@ -8,6 +8,11 @@
 
 <h1>School Directory</h1>
 
+<input @bind="Search"
+       @bind:event="oninput"
+       class="form-control mb-3"
+       placeholder="Search school..." />
+
 @if (error)
 {
     <p>Unable to retrieve school data.</p>
@@ -22,7 +27,7 @@ else
     {
         <SchoolDetails School="@selectedSchool" />
     }
-    @foreach (var school in schools)
+    @foreach (var school in FilteredSchools)
     {
         <SchoolCard School="@school"
                     OnSelect="HandleSchoolSelected" />
@@ -31,8 +36,16 @@ else
 
 @code {
     private List<School>? schools;
+    private string Search = string.Empty;
     private bool error = false;
     private School? selectedSchool;
+    private IEnumerable<School> FilteredSchools =>
+    schools?
+        .Where(s => s.SchoolName.Contains(
+            Search,
+            StringComparison.OrdinalIgnoreCase))
+    ?? Enumerable.Empty<School>();
+
     private void HandleSchoolSelected(School school)
     {
         selectedSchool = school;

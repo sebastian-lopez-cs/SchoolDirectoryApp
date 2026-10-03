@@ -10,8 +10,21 @@
 
 <input @bind="Search"
        @bind:event="oninput"
+       @bind:after="ClearSelection"
        class="form-control mb-3"
        placeholder="Search school..." />
+
+<div class="mb-3">
+    <button class="btn btn-outline-secondary me-2"
+            @onclick="ToggleSort">
+        Sort: @(sortAscending ? "A-Z" : "Z-A")
+    </button>
+
+    <button class="btn btn-outline-primary"
+            @onclick="LoadSchoolsAsync">
+        Refresh
+    </button>
+</div>
 
 @if (error)
 {
@@ -23,10 +36,23 @@ else if (schools == null)
 }
 else
 {
+    <div class="d-flex gap-3 mb-3">
+        <div class="border rounded px-3 py-2">
+            <strong>Total Schools:</strong>
+            @(schools?.Count ?? 0)
+        </div>
+
+        <div class="border rounded px-3 py-2">
+            <strong>Results Shown:</strong>
+            @FilteredSchools.Count()
+        </div>
+    </div>
+
     @if (selectedSchool != null)
     {
         <SchoolDetails School="@selectedSchool" />
     }
+
     <div class="row g-3">
         @foreach (var school in FilteredSchools)
         {
@@ -43,20 +69,14 @@ else
     private string Search = string.Empty;
     private bool error = false;
     private School? selectedSchool;
-    private IEnumerable<School> FilteredSchools =>
-    schools?
-        .Where(s => s.SchoolName.Contains(
-            Search,
-            StringComparison.OrdinalIgnoreCase))
-    ?? Enumerable.Empty<School>();
-
-    private void HandleSchoolSelected(School school)
+    private bool sortAscending = true;
+   
+    private async Task LoadSchoolsAsync()
     {
-        selectedSchool = school;
-    }
+        schools = null;
+        error = false;
+        selectedSchool = null;
 
-    protected override async Task OnInitializedAsync()
-    {
         try
         {
             schools = await SchoolService.GetSchoolsAsync();
@@ -65,5 +85,41 @@ else
         {
             error = true;
         }
+    }
+
+    private IEnumerable<School> FilteredSchools
+    {
+        get
+        {
+            var filtered = schools?
+                .Where(s => s.SchoolName.Contains(
+                    Search,
+                    StringComparison.OrdinalIgnoreCase))
+                ?? Enumerable.Empty<School>();
+
+            return sortAscending
+                ? filtered.OrderBy(s => s.SchoolName)
+                : filtered.OrderByDescending(s => s.SchoolName);
+        }
+    }
+
+    private void ToggleSort()
+    {
+        sortAscending = !sortAscending;
+    }
+
+    private void ClearSelection()
+    {
+        selectedSchool = null;
+    }
+
+    private void HandleSchoolSelected(School school)
+    {
+        selectedSchool = school;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSchoolsAsync();
     }
 }

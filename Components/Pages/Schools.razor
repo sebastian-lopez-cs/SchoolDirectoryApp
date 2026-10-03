@@ -55,15 +55,24 @@ else
         <SchoolDetails School="@selectedSchool" />
     }
 
-    <div class="row g-3">
-        @foreach (var school in FilteredSchools)
-        {
-            <div class="col-12 col-lg-6">
-                <SchoolCard School="@school"
-                            OnSelect="HandleSchoolSelected" />
-            </div>
-        }
-    </div>
+    @if (!FilteredSchools.Any())
+    {
+        <p class="text-muted">
+            No schools found matching your search.
+        </p>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var school in FilteredSchools)
+            {
+                <div class="col-12 col-lg-6">
+                    <SchoolCard School="@school"
+                                OnSelect="HandleSchoolSelected" />
+                </div>
+            }
+        </div>
+    }
 }
 
 @code {
